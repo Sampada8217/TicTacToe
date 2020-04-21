@@ -104,6 +104,24 @@ function checkDiagonal()
 		fi
 	fi
 }
+function CheckTie()
+{
+	if [ $won == 0 ]
+	then
+		isSymfilled=1
+		while [ ${BOARD[$isSymFilled]} != $emptySym ]
+		do
+			if [ $isSymFilled -eq $BOARD_POS ]
+			then
+				echo "Tie"
+				break
+			else
+				isSymFilled=$(($isSymFilled+1))
+			fi
+		done
+	fi
+}
+
 function  Player1()
 {
 	echo "Enter Position where you want to place Symbol"
