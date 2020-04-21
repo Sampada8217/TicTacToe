@@ -139,7 +139,9 @@ function  Player1()
 
 
 function player2()
-{
+{      
+  checkWin
+  checkOppWin   
 	pos=$(( (RANDOM%9) +1 ))
 	if [ ${BOARD[$pos]} == $emptySym ]
 	then
@@ -153,10 +155,10 @@ function player2()
 
 function checkWin()
 {
-	winMove=$(checkHorizontal $1 )
+	winMove=$(checkHorizontal $1)
 	if [ "$winMove" == -1 ]
 	then
-		winMove=$(checkVertical $1 )
+		winMove=$(checkVertical $1)
 		if [ "$winMove" == -1 ]
 		then
 			winMove=$(checkDiagonal $1 1)
@@ -170,3 +172,20 @@ function checkWin()
 }
 
 
+function checkOppWin()
+{
+	blockMove=$(checkHorizontal $1)
+	if [ "$blockMove" == -1 ]
+	then
+		blockMove=$(checkVertical $1)
+		if [ "$blockMove" == -1 ]
+		then
+			blockMove=$(checkDiagonal $1 1)
+			if [ "SblockMove" == -1 ]
+			then
+				blockMove=$(checkDiagonal $1 -1)
+                	fi
+ 		fi
+	fi
+  echo $blockMove
+}
