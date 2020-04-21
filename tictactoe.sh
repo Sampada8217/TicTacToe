@@ -207,6 +207,12 @@ function  checkCorner()
 		fi
 	done
 }
+function checkCenter()
+{
+	cent=5
+	BOARD[$cent]=$COMP_TURN
+	printBoard
+}
  
 function checkSides()
 {
@@ -224,6 +230,5 @@ function checkSides()
 		fi
 	done
 }
-
  
 
