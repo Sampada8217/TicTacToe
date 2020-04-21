@@ -1,5 +1,4 @@
 #!/bin/bash 
-
 function CheckFirstPlayer()
 {
 	toss=$((RANDOM%2))
@@ -16,16 +15,16 @@ function resetBoard()
 	MY_TURN=O
 	COMP_TURN=X
 	BOARD_SIZE=3
-	BOARD_POS=9
-	player=$toss
+	BOARD_POS=10
+	player=$(( (player%2) +1 ))
 	won=0
 	emptySym='.'
+        turn=0
 	for (( i=0; i<=$BOARD_POS; i++ ))
 	do
      		BOARD[$i]="."
 	done
 }
-resetBoard
 function printBoard()
 {
 	echo " | ${BOARD[1]} | ${BOARD[2]} | ${BOARD[3]} | "
@@ -35,7 +34,6 @@ function printBoard()
 	echo " | ${BOARD[7]} | ${BOARD[8]} | ${BOARD[9]} | "
 	echo "------------"
 }
-printBoard
 
 function checkHorizontal()
 {
@@ -68,7 +66,7 @@ function checkVertical()
 		local col=3
 		local pos=1
 		local symCount=1
-		while [ $symCount -ne $rows ]
+		while [ $symCount -ne $col ]
 		do
                 	if [[ ${BOARD[$pos]} == ${BOARD[$pos+3]} ]] && [[ ${BOARD[$pos]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos+3]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos]} == $1 ]] 
           		then
@@ -79,7 +77,7 @@ function checkVertical()
                         else
                                pos=$(( $pos + $col ))
                         fi
-                symCount=$(( $symCount + 1))
+                symCount=$(( $symCount + 1 ))
 		done
          fi
 }
@@ -89,13 +87,13 @@ function checkDiagonal()
 	if [ $won == 0 ]
 	then
 		local pos=1
-		if [ ${BOARD[$pos]} == ${BOARD[$pos+4]} ] && [ ${BOARD[$pos+4]} == ${BOARD[$pos+8]} ] && [ ${BOARD[$pos]} == ${BOARD[$pos+8]} ] && [ ${BOARD[$pos]} == $1 ]
+		if [[ ${BOARD[$pos]} == ${BOARD[$pos+4]} ]] && [[ ${BOARD[$pos+4]} == ${BOARD[$pos+8]} ]] && [[ ${BOARD[$pos]} == ${BOARD[$pos+8]} ]] && [[ ${BOARD[$pos]} == $1 ]]
 		then
 			printBoard
 			echo "Won Diagonally"
 			won=1
 			break
-                elif [[ ${BOARD[pos+2]} == ${BOARD[pos+4]} ]] && [[ ${BOARD[$pos+2]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos+4]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos+2]} == $1 ]] 
+                elif [[ ${BOARD[$pos+2]} == ${BOARD[$pos+4]} ]] && [[ ${BOARD[$pos+2]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos+4]} == ${BOARD[$pos+6]} ]] && [[ ${BOARD[$pos+2]} == $1 ]] 
 		then
 			printBoard
 			echo "Won Diagonally"
@@ -126,8 +124,7 @@ function  Player1()
 {
 	echo "Enter Position where you want to place Symbol"
 	read pos
-
-	if [ ${BOARD[$pos]} == $emptySym ]
+        if [ ${BOARD[$pos]} == $emptySym ]
         then
 		BOARD[$pos]=$MY_TURN
 		player=$(( (player%2) +1 ))
@@ -135,23 +132,31 @@ function  Player1()
 		echo "You Can't Place There"
 		Player1
         fi
+        turn=0
 }
 
 
 function player2()
-{      
-  checkWin
-  checkOppWin   
-	pos=$(( (RANDOM%9) +1 ))
-	if [ ${BOARD[$pos]} == $emptySym ]
+{
+	turn=0
+	echo "Computer playing"
+	checkWin  
+        checkOppWin 
+	if [ $turn = 0 ]
 	then
-		BOARD[$pos]=$COMP_TURN
-		printBoard
-	else
-		echo "Choose other Input"
-                player2
+		checkCorner
         fi
+	if [ $turn = 0 ]
+	then
+		checkCenter
+	fi
+	if [ $turn = 0 ]
+	then
+		checkSides
+	fi
 }
+        
+
 
 function checkWin()
 {
@@ -187,7 +192,7 @@ function checkOppWin()
                 	fi
  		fi
 	fi
-  echo $blockMove
+        echo $blockMove
 }
 
 function  checkCorner()
@@ -199,6 +204,7 @@ function  checkCorner()
 			echo "Move to Corner"
 			BOARD[$i]=$COMP_TURN
 			printBoard
+			turn=1
 			break
 		fi
                 if [ $i -eq 3 ]
@@ -210,19 +216,26 @@ function  checkCorner()
 function checkCenter()
 {
 	cent=5
-	BOARD[$cent]=$COMP_TURN
-	printBoard
+	if [[ ${BOARD[$cent]} == $emptySym ]]
+        then
+		echo "Move to Center"
+		BOARD[$cent]=$COMP_TURN
+		printBoard
+		turn=1
+	 fi
 }
  
 function checkSides()
 {
 	for ((i=2;i<$BOARD_POS;i=$(($i+2)) ))
 	do
-		if [ ${BOARD[$i]} == $emptySym ]
+		if [ ${BOARD[$i]} == '.' ]
 		then
 			echo "Move to sides"
 			BOARD[$i]=$COMP_TURN
 			printBoard
+			turn=1
+			break
 		fi
 		if [ $i == 3 ] || [ $i == 6 ]
 		then
@@ -230,5 +243,29 @@ function checkSides()
 		fi
 	done
 }
- 
-
+resetBoard
+CheckFirstPlayer
+while [ $won != 1 ]
+do
+	if [ $turn -eq 1 ]
+        then
+		Player1
+		checkHorizontal $MY_TURN
+		checkVertical $MY_TURN
+		checkDiagonal $MY_TURN
+		CheckTie $MY_TURN
+		turn=0		
+	else
+		player2
+		checkHorizontal $COMP_TURN
+		checkVertical $COMP_TURN
+		checkDiagonal $COMP_TU
+		CheckTie $COMP_TURN
+		turn=1
+		
+	fi
+done
+if [ $won == 1 ]
+then
+	echo "Game Over"
+fi	
