@@ -208,5 +208,22 @@ function  checkCorner()
 	done
 }
  
+function checkSides()
+{
+	for ((i=2;i<$BOARD_POS;i=$(($i+2)) ))
+	do
+		if [ ${BOARD[$i]} == $emptySym ]
+		then
+			echo "Move to sides"
+			BOARD[$i]=$COMP_TURN
+			printBoard
+		fi
+		if [ $i == 3 ] || [ $i == 6 ]
+		then
+			i=$(($i+1))
+		fi
+	done
+}
+
  
 
