@@ -12,20 +12,20 @@ function CheckFirstPlayer()
 }
 function resetBoard()
 {
-echo "Welcome to Tic Tac Toe Game"
-MY_TURN=O
-COMP_TURN=X
-BOARD_SIZE=3
-BOARD_POS=10
-player=$toss
-won=0
-emptySym='.'
-for (( i=1; i<=$BOARD_POS; i++ ))
-do
-     BOARD[$i]="."
-done
+	echo "Welcome to Tic Tac Toe Game"
+	MY_TURN=O
+	COMP_TURN=X
+	BOARD_SIZE=3
+	BOARD_POS=9
+	player=$toss
+	won=0
+	emptySym='.'
+	for (( i=0; i<=$BOARD_POS; i++ ))
+	do
+     		BOARD[$i]="."
+	done
 }
-
+resetBoard
 function printBoard()
 {
 	echo " | ${BOARD[1]} | ${BOARD[2]} | ${BOARD[3]} | "
@@ -189,3 +189,24 @@ function checkOppWin()
 	fi
   echo $blockMove
 }
+
+function  checkCorner()
+{
+	for((i=1;i<$BOARD_POS;i=$(($i+2)) ))
+	do
+		if [ ${BOARD[$i]} == $emptySym ]
+		then
+			echo "Move to Corner"
+			BOARD[$i]=$COMP_TURN
+			printBoard
+			break
+		fi
+                if [ $i -eq 3 ]
+                then
+			i=$(($i+2))
+		fi
+	done
+}
+ 
+ 
+
