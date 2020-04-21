@@ -133,7 +133,20 @@ function  Player1()
 		player=$(( (player%2) +1 ))
 	else
 		echo "You Can't Place There"
+		Player1
         fi
 }
 
 
+function player2()
+{
+	pos=$(( (RANDOM%9) +1 ))
+	if [ ${BOARD[$pos]} == $emptySym ]
+	then
+		BOARD[$pos]=$COMP_TURN
+		printBoard
+	else
+		echo "Choose other Input"
+                player2
+        fi
+}
