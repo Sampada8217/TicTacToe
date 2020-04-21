@@ -7,6 +7,8 @@ MY_TURN=O
 COMP_TURN=X
 BOARD_SIZE=3
 BOARD_POS=9
+player1=$MY_TURN
+Player2=$COMP_TURN
 
 for (( i=0; i<=$BOARD_POS; i++ ))
 do
@@ -15,6 +17,17 @@ done
 
 
 }
+
+
+function CheckFirstPlayer()
+{
+	toss=$((RANDOM%2))
+	if [ $toss -eq 1 ]
+	then
+		echo "First turn is MY_TURN"
+        else
+                echo "First turn is COMP_TURN"
+ 
  
 function printBoard()
 {
