@@ -37,7 +37,7 @@ function printBoard()
 }
 printBoard
 
-function checkHorizonatal()
+function checkHorizontal()
 {
 	if [ $won == 0 ]
         then
@@ -150,3 +150,23 @@ function player2()
                 player2
         fi
 }
+
+function checkWin()
+{
+	winMove=$(checkHorizontal $1 )
+	if [ "$winMove" == -1 ]
+	then
+		winMove=$(checkVertical $1 )
+		if [ "$winMove" == -1 ]
+		then
+			winMove=$(checkDiagonal $1 1)
+			if [ "$winMove" == -1 ]
+			then
+				winmove=$(checkDiagonal $1 -1)
+			fi
+		fi
+	fi
+	echo $winMove
+}
+
+
