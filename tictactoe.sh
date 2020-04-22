@@ -16,7 +16,6 @@ function resetBoard()
 	COMP_TURN=X
 	BOARD_SIZE=3
 	BOARD_POS=10
-	player=$(( (player%2) +1 ))
 	won=0
 	emptySym='.'
         turn=0
@@ -122,6 +121,8 @@ function CheckTie()
 
 function  Player1()
 {
+        echo "MY TURN displaying Board to fill valid cell"
+	printBoard
 	echo "Enter Position where you want to place Symbol"
 	read pos
         if [ ${BOARD[$pos]} == $emptySym ]
@@ -142,7 +143,7 @@ function player2()
 	col=3
 	turn=0
 	echo "Computer playing"
-	checkWin $row $col
+        checkWin $row $col
 	checkWin $col $row
 	checkOppWin $row $col
 	checkOppWin $col $row
@@ -161,8 +162,6 @@ function player2()
 	fi
 }
         
-
-
 function checkWin()
 {
 	count=1
@@ -171,23 +170,20 @@ function checkWin()
 		if [[ ${BOARD[$count]} == ${BOARD[$count+$1+$1]} ]] && [[ ${BOARD[$count+$1]} == $emptySym ]] && [[ ${BOARD[$count]} == $COMP_TURN ]] 
 		then
 			winMove=$(( $count+$1 ))
-			echo "winning move is ."$winMove
 			BOARD[$winMove]=$COMP_TURN
 			printBoard
 			turn=1
 			break
-		elif [[ ${BOARD[$count]} == ${BOARD[$count+$1]} ]] && [[ ${BOARD[$count+$1+$1]} == $emptySym ]] && ${BOARD[$count]} == $COMP_TURN ]]
+               elif [[ ${BOARD[$count]} == ${BOARD[$count+$1]} ]] && [[ ${BOARD[$count+$1+$1]} == $emptySym ]] && [[ ${BOARD[$count]} == $COMP_TURN ]]
 		then
 			winMove=$(( $count+$1+$1 ))
-			echo "winning move is .."$winMove
 			BOARD[$winMove]=$COMP_TURN
 			printBoard
 			turn=1
 			break
-		elif [[ ${BOARD[$counte+$1]} == ${BOARD[$count+$1+$1]} ]] && [[ ${BOARD[$count]} == $emptySym ]] && [[ ${board[$count+$1]} == $COMP_TURN ]]
+		elif [[ ${BOARD[$count+$1]} == ${BOARD[$count+$1+$1]} ]] && [[ ${BOARD[$count]} == $emptySym ]] && [[ ${board[$count+$1]} == $COMP_TURN ]]
 		then
 			winMove=$count
-			echo "winning move is ..."$winMove
 			BOARD[$winMove]=$COMP_TURN
 			printBoard
 			turn=1
@@ -201,35 +197,32 @@ function checkWin()
 function checkOppWin()
 {
 	countOpp=1
-	if [ $turn == 0 ]
+ 	if [ $turn -eq  0 ]
 	then
 	for (( i=1;i<=3;i++))
 	do
 		if [[ ${BAORD[$countOpp]} == ${BAORD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp+$1]} == $emptySym ]] && [[ ${BOARD[$counterOpp]} == $MY_TURN ]] 
 		then
 			blockMove=$(( $countOpp+$1 ))
-			echo "blocking move is "$blockMove
-			board[$blockMove]=$COMP_TURN
+			BOARD[$blockMove]=$COMP_TURN
 			turn=1
 			break
 		elif [[ ${BOARD[$countOpp]} == ${BOARD[$countOpp+$1]} ]] && [[ ${BOARD[$countOpp+$1+$1]} == $tail ]] && [[ ${BOARD[$countOpp]} == $MY_TURN ]]
 		then
 			blockMove=$(( $counteOpp+$1+$1 ))
-			echo "blocking move is "$blockMove
-			board[$blockMove]=$COMP_TURN
+			BOARD[$blockMove]=$COMP_TURN
 			turn=1
 			break
 		elif [[ ${BOARD[$countOpp+$1]} == ${BOARD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp]} == $emptySym ]] && [[ ${BOARD[$countOpp+$1]} == $MY_TURN ]]
 		then
 			blockMove=$countOpp
-			echo "blocking move is "$blockMove
-			board[$blockMove]=$COMP_TURN
+			BOARD[$blockMove]=$COMP_TURN
 			turn=1
 			break
 		fi
 	countOpp=$(( $countOpp+$2 ))
-	done
-	fi
+        done
+ 	fi
 
 }
 
@@ -281,11 +274,14 @@ function checkSides()
 		fi
 	done
 }
+function PlayGame()
+{
 resetBoard
 CheckFirstPlayer
+turn=$toss
 while [ $won != 1 ]
 do
-	if [ $turn -eq 1 ]
+	if [ $turn  ==  1 ]
         then
 		Player1
 		checkHorizontal $MY_TURN
@@ -307,3 +303,5 @@ if [ $won == 1 ]
 then
 	echo "Game Over"
 fi	
+}
+PlayGame
