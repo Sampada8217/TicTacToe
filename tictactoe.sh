@@ -1,4 +1,20 @@
 #!/bin/bash  
+function checkLetterAssigned()
+{
+	letter=$((RANDOM%2))
+	if [ $letter -eq 1 ]
+	then
+		echo "O assigned to MY_TURN"
+		MY_TURN=O
+		echo "X assigned to COMP_TURN"
+		COMP_TURN=X
+	else
+		echo "X is assigned to MY_TURN"
+		MY_TURN=X
+		echo "O is assigned to COMP_TURN"
+		COMP_TURN=O
+	fi
+}
 function CheckFirstPlayer()
 {
 	toss=$((RANDOM%2))
@@ -12,8 +28,7 @@ function CheckFirstPlayer()
 function resetBoard()
 {
 	echo "Welcome to Tic Tac Toe Game"
-	MY_TURN=O
-	COMP_TURN=X
+	checkLetterAssigned
 	BOARD_SIZE=3
 	BOARD_POS=10
 	won=0
@@ -105,15 +120,16 @@ function CheckTie()
 {
 	if [ $won == 0 ]
 	then
-		isSymfilled=1
+		isSymFilled=1
 		while [ ${BOARD[$isSymFilled]} != $emptySym ]
 		do
-			if [ $isSymFilled -eq $BOARD_POS ]
+			if [ $isSymFilled == 9 ]
 			then
 				echo "Tie"
+				won=1
 				break
 			else
-				isSymFilled=$(($isSymFilled+1))
+				isSymFilled=$(( $isSymFilled + 1 ))
 			fi
 		done
 	fi
@@ -201,15 +217,15 @@ function checkOppWin()
 	then
 	for (( i=1;i<=3;i++))
 	do
-		if [[ ${BAORD[$countOpp]} == ${BAORD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp+$1]} == $emptySym ]] && [[ ${BOARD[$counterOpp]} == $MY_TURN ]] 
+		if [[ ${BAORD[$countOpp]} == ${BAORD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp+$1]} == $emptySym ]] && [[ ${BOARD[$countOpp]} == $MY_TURN ]] 
 		then
-			blockMove=$(( $countOpp+$1 ))
+			blockMove=$(($countOpp+$1))
 			BOARD[$blockMove]=$COMP_TURN
 			turn=1
 			break
-		elif [[ ${BOARD[$countOpp]} == ${BOARD[$countOpp+$1]} ]] && [[ ${BOARD[$countOpp+$1+$1]} == $tail ]] && [[ ${BOARD[$countOpp]} == $MY_TURN ]]
+		elif [[ ${BOARD[$countOpp]} == ${BOARD[$countOpp+$1]} ]] && [[ ${BOARD[$countOpp+$1+$1]} == $emptySym ]] && [[ ${BOARD[$countOpp]} == $MY_TURN ]]
 		then
-			blockMove=$(( $counteOpp+$1+$1 ))
+			blockMove=$(($counteOpp+$1+$1))
 			BOARD[$blockMove]=$COMP_TURN
 			turn=1
 			break
@@ -293,10 +309,9 @@ do
 		player2
 		checkHorizontal $COMP_TURN
 		checkVertical $COMP_TURN
-		checkDiagonal $COMP_TU
+		checkDiagonal $COMP_TURN
 		CheckTie $COMP_TURN
 		turn=1
-		
 	fi
 done
 if [ $won == 1 ]
