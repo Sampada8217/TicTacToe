@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash  
 function CheckFirstPlayer()
 {
 	toss=$((RANDOM%2))
@@ -138,10 +138,15 @@ function  Player1()
 
 function player2()
 {
+        row=1
+	col=3
 	turn=0
 	echo "Computer playing"
-	checkWin  
-        checkOppWin 
+	checkWin $row $col
+	checkWin $col $row
+	checkOppWin $row $col
+	checkOppWin $col $row
+
 	if [ $turn = 0 ]
 	then
 		checkCorner
@@ -160,39 +165,72 @@ function player2()
 
 function checkWin()
 {
-	winMove=$(checkHorizontal $1)
-	if [ "$winMove" == -1 ]
-	then
-		winMove=$(checkVertical $1)
-		if [ "$winMove" == -1 ]
+	count=1
+	for (( i=1;i<=3;i++))
+	do
+		if [[ ${BOARD[$count]} == ${BOARD[$count+$1+$1]} ]] && [[ ${BOARD[$count+$1]} == $emptySym ]] && [[ ${BOARD[$count]} == $COMP_TURN ]] 
 		then
-			winMove=$(checkDiagonal $1 1)
-			if [ "$winMove" == -1 ]
-			then
-				winmove=$(checkDiagonal $1 -1)
-			fi
+			winMove=$(( $count+$1 ))
+			echo "winning move is ."$winMove
+			BOARD[$winMove]=$COMP_TURN
+			printBoard
+			turn=1
+			break
+		elif [[ ${BOARD[$count]} == ${BOARD[$count+$1]} ]] && [[ ${BOARD[$count+$1+$1]} == $emptySym ]] && ${BOARD[$count]} == $COMP_TURN ]]
+		then
+			winMove=$(( $count+$1+$1 ))
+			echo "winning move is .."$winMove
+			BOARD[$winMove]=$COMP_TURN
+			printBoard
+			turn=1
+			break
+		elif [[ ${BOARD[$counte+$1]} == ${BOARD[$count+$1+$1]} ]] && [[ ${BOARD[$count]} == $emptySym ]] && [[ ${board[$count+$1]} == $COMP_TURN ]]
+		then
+			winMove=$count
+			echo "winning move is ..."$winMove
+			BOARD[$winMove]=$COMP_TURN
+			printBoard
+			turn=1
+			break
 		fi
-	fi
-	echo $winMove
+	count=$(( $count+$2 ))
+	done
 }
 
 
 function checkOppWin()
 {
-	blockMove=$(checkHorizontal $1)
-	if [ "$blockMove" == -1 ]
+	countOpp=1
+	if [ $turn == 0 ]
 	then
-		blockMove=$(checkVertical $1)
-		if [ "$blockMove" == -1 ]
+	for (( i=1;i<=3;i++))
+	do
+		if [[ ${BAORD[$countOpp]} == ${BAORD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp+$1]} == $emptySym ]] && [[ ${BOARD[$counterOpp]} == $MY_TURN ]] 
 		then
-			blockMove=$(checkDiagonal $1 1)
-			if [ "SblockMove" == -1 ]
-			then
-				blockMove=$(checkDiagonal $1 -1)
-                	fi
- 		fi
+			blockMove=$(( $countOpp+$1 ))
+			echo "blocking move is "$blockMove
+			board[$blockMove]=$COMP_TURN
+			turn=1
+			break
+		elif [[ ${BOARD[$countOpp]} == ${BOARD[$countOpp+$1]} ]] && [[ ${BOARD[$countOpp+$1+$1]} == $tail ]] && [[ ${BOARD[$countOpp]} == $MY_TURN ]]
+		then
+			blockMove=$(( $counteOpp+$1+$1 ))
+			echo "blocking move is "$blockMove
+			board[$blockMove]=$COMP_TURN
+			turn=1
+			break
+		elif [[ ${BOARD[$countOpp+$1]} == ${BOARD[$countOpp+$1+$1]} ]] && [[ ${BOARD[$countOpp]} == $emptySym ]] && [[ ${BOARD[$countOpp+$1]} == $MY_TURN ]]
+		then
+			blockMove=$countOpp
+			echo "blocking move is "$blockMove
+			board[$blockMove]=$COMP_TURN
+			turn=1
+			break
+		fi
+	countOpp=$(( $countOpp+$2 ))
+	done
 	fi
-        echo $blockMove
+
 }
 
 function  checkCorner()
